@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>First-Time Home Buyer Checklist (Ontario)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+            /* Light gray background */
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 1.5rem;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .tab-button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            border: 1px solid #d1d5db;
+            /* Light gray border */
+        }
+
+        .tab-button.active {
+            background-color: #2563eb;
+            /* Blue */
+            color: #ffffff;
+            border-color: #2563eb;
+        }
+
+        .tab-button:not(.active):hover {
+            background-color: #e5e7eb;
+            /* Lighter gray on hover */
+        }
+
+        .print-button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            background-color: #10b981;
+            /* Green */
+            color: #ffffff;
+            border: 1px solid #059669;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .print-button:hover {
+            background-color: #059669;
+            /* Darker green on hover */
+        }
+
+        th {
+            background-color: #f9fafb;
+            /* Even lighter gray for table header */
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        td {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid #e5e7eb;
+            /* Light border for rows */
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .checkbox-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        input[type="checkbox"] {
+            transform: scale(1.2);
+            /* Slightly larger checkbox */
+            accent-color: #2563eb;
+            /* Blue checkmark */
+        }
+
+        .red-flag-row td {
+            background-color: #fef2f2;
+            /* Light red background for red flags */
+        }
+
+        .red-flag-text {
+            color: #dc2626;
+            /* Darker red text for red flags */
+            font-weight: 500;
+        }
+
+        /* Print-specific CSS */
+        @media print {
+            @page {
+                size: landscape;
+                /* Set page orientation to landscape */
+            }
+
+            .tab-buttons,
+            .search-bar,
+            .print-button-container {
+                display: none;
+                /* Hide interactive elements when printing */
+            }
+
+            .container {
+                box-shadow: none;
+                margin: 0;
+                padding: 0;
+                max-width: none;
+                width: 100%;
+            }
+
+            #checklistSection,
+            #redFlagsSection {
+                display: block !important;
+                /* Ensure both sections are visible */
+            }
+
+            #checklistTableBody tr.bg-gray-100,
+            #redFlagsTableBody tr.bg-red-100 {
+                -webkit-print-color-adjust: exact;
+                /* Ensure background colors print */
+                color-adjust: exact;
+                background-color: #e0e0e0 !important;
+                /* Lighter for print */
+                color: #333 !important;
+            }
+
+            .red-flag-row td {
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+                background-color: #ffebeb !important;
+                /* Lighter red for print */
+            }
+
+            th {
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+                background-color: #f0f0f0 !important;
+                /* Lighter for print */
+            }
+
+            table {
+                break-inside: auto;
+            }
+
+            tr {
+                break-inside: avoid;
+                break-after: auto;
+            }
+
+            td {
+                border: 1px solid #ccc;
+                /* Thicker borders for print clarity */
+                padding: 0.5rem;
+            }
+
+            .print-new-page-category {
+                page-break-before: always;
+                /* Force a new page before each category */
+            }
+
+            /* Specific print styles for Red Flags as a list */
+            #redFlagsSection table {
+                display: none !important;
+                /* Hide the red flags table in print mode */
+            }
+
+            #printRedFlagsContainer {
+                display: block !important;
+                /* Show the bulleted list container in print mode */
+                page-break-before: always;
+                /* Ensure red flags section starts on a new page */
+            }
+
+            #printRedFlagsContainer ul {
+                list-style-type: disc;
+                margin-left: 20px;
+                /* Indent bullet points */
+                padding-left: 0;
+                /* Remove default padding from Tailwind if any */
+            }
+
+            #printRedFlagsContainer li {
+                margin-bottom: 5px;
+                color: #333;
+                /* Default text color for printed list */
+            }
+
+            #printRedFlagsContainer li.red-flag-text {
+                color: #dc2626;
+                /* Keep red color for red flag text */
+            }
+        }
+    </style>
+</head>
+
+<body class="p-4 md:p-8">
+
+    <div class="container">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">First-Time Home Buyer Checklist (Ontario)</h1>
+
+        <!-- Tab Buttons and Print Button -->
+        <div
+            class="flex flex-col sm:flex-row justify-center items-center mb-6 space-y-4 sm:space-y-0 sm:space-x-4 tab-buttons">
+            <div class="flex space-x-4">
+                <button id="checklistTab" class="tab-button active">Checklist</button>
+                <button id="redFlagsTab" class="tab-button">Red Flags</button>
+            </div>
+            <div class="print-button-container sm:ml-auto">
+                <button id="printButton" class="print-button">Print All</button>
+            </div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="mb-6 search-bar">
+            <input type="text" id="searchInput" placeholder="Search checklist items..."
+                class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 ease-in-out">
+        </div>
+
+        <!-- Checklist Table -->
+        <div id="checklistSection">
+            <div class="overflow-x-auto rounded-lg shadow-sm border border-gray-200">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider rounded-tl-lg">
+                                Category</th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Checklist Item</th>
+                            <th scope="col"
+                                class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider rounded-tr-lg">
+                                Done</th>
+                        </tr>
+                    </thead>
+                    <tbody id="checklistTableBody" class="bg-white divide-y divide-gray-200">
+                        <!-- Checklist rows will be dynamically inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Red Flags Table (initially hidden) -->
+        <div id="redFlagsSection" class="hidden">
+            <div class="overflow-x-auto rounded-lg shadow-sm border border-gray-200">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider rounded-tl-lg">
+                                Category</th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider rounded-tr-lg">
+                                Red Flag</th>
+                        </tr>
+                    </thead>
+                    <tbody id="redFlagsTableBody" class="bg-white divide-y divide-gray-200">
+                        <!-- Red Flag rows will be dynamically inserted here -->
+                    </tbody>
+                </table>
+            </div>
+            <!-- Container for printed red flags as a list -->
+            <div id="printRedFlagsContainer" class="hidden">
+                <!-- Content will be dynamically inserted here for printing -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data for the checklist
+        const checklistData = [
+            { category: "I. Property Documents & History", item: "Ask for a 'Seller Disclosure Information Statement' and review it carefully for any known issues." },
+            { category: "I. Property Documents & History", item: "Inquire about the past history of the property, including any significant events or previous issues." },
+            { category: "I. Property Documents & History", item: "Obtain details of any significant work done on the property and verify if the necessary permits were pulled and closed." },
+            { category: "I. Property Documents & History", item: "Request 12 months of utility statements (power, gas, water) to understand average costs. Ask for maintenance history for major systems (furnace, HVAC, septic if applicable)." },
+            { category: "I. Property Documents & History", item: "Inquire if there is a current localization certificate or property survey; if not, consider making your offer conditional on one. Confirm property lines, markers, and check for any encroachments." },
+            { category: "I. Property Documents & History", item: "Check for any existing warranties on the home, appliances, or systems. Investigate any easements, rights of way, or zoning restrictions, and be aware of any outstanding permits or legal issues." },
+            { category: "I. Property Documents & History", item: "Politely ask if there have been any insurance claims made on the property." },
+
+            { category: "II. Property Condition - Exterior", item: "Inspect for any visible foundation cracks from outside. Pay close attention to the grade of the land, ensuring it slopes down and away from the house to prevent water accumulation." },
+            { category: "II. Property Condition - Exterior", item: "Assess the age and condition of the roof. Check the state of gutters and downspouts." },
+            { category: "II. Property Condition - Exterior", item: "Examine the driveway and garage for any concrete cracks." },
+            { category: "II. Property Condition - Exterior", item: "Evaluate the current landscaping and its potential for improvement. Inspect the condition of outdoor structures like sheds, gazebos, and fences, as replacement or removal can be costly." },
+
+            { category: "III. Property Condition - Interior", item: "Determine the age of windows, AC, furnace, and all appliances. Confirm if all appliances are present and in working order. Check if any appliances or other home systems (like water heater, HVAC) are rented or under lease agreements." },
+            { category: "III. Property Condition - Interior", item: "Verify the electrical panel type (100A / 200A) and look for an ESA sticker to confirm it was inspected." },
+            { category: "III. Property Condition - Interior", item: "Check for good water pressure and ensure sinks and tubs drain properly. Look for any visible signs of water issues or dampness, especially in the basement." },
+            { category: "III. Property Condition - Interior", item: "Assess the condition of the paint and flooring throughout the house. Identify the type of flooring and check if there is any laminate or carpet in the kitchen or bathrooms. Examine bath fixtures for mold or damage, and open cabinets to inspect inside." },
+            { category: "III. Property Condition - Interior", item: "Note the smell of the house – detect any smoke, weed, or musty odors. Check for signs of rodents (droppings, bait), as this could indicate ongoing issues requiring professional remediation." },
+
+            { category: "IV. Location & Lifestyle", item: "Research and visit the neighborhood at different times of day (rush hour, evenings, weekends) to get a feel for noise levels, traffic, and overall activity. Talk to potential neighbors about the area and current owners if possible. Research nearby schools if you have children." },
+            { category: "IV. Location & Lifestyle", item: "Consider if the layout of the house aligns with your preferences and if you can envision yourself living there comfortably. Assess the square footage and whether it meets your needs." },
+            { category: "IV. Location & Lifestyle", item: "Check for reliable internet speed and cell service in different areas of the house. Evaluate proximity to public transport, grocery stores, hospitals, and parks." },
+            { category: "IV. Location & Lifestyle", item: "Identify the one or two key selling features that truly make you connect with the house and envision it as your home." },
+            { category: "IV. Location & Lifestyle", item: "Consider if you prefer a smaller front yard with a bigger backyard, or vice-versa, based on your lifestyle needs." },
+
+            { category: "V. Financial & Offer Considerations", item: "Research comparable houses and their prices in the same neighborhood to ensure the asking price is fair." },
+            { category: "V. Financial & Offer Considerations", item: "Always include conditions in your offer for a home inspection, securing financing, and obtaining insurance. Never make an unconditional offer." },
+            { category: "V. Financial & Offer Considerations", item: "Ensure your offer includes a clear clause for the sellers to remove all belongings and leave the property clean and swept. Consider discussing with your lawyer a holdback of some funds at closing in case the sellers leave excessive junk or construction material requiring removal." },
+
+            { category: "VI. Additional Key Considerations", item: "Find out the current annual property taxes for the house." },
+            { category: "VI. Additional Key Considerations", item: "Obtain an insurance quote for the property before firming up your offer, as costs can vary based on property age, type of wiring, and other factors." },
+            { category: "VI. Additional Key Considerations", item: "Inquire about the type of plumbing (e.g., copper, PEX). Be particularly vigilant about older homes that might still have lead pipes." },
+            { category: "VI. Additional Key Considerations", item: "If possible, inquire about the type and R-value of insulation in the attic, walls, and basement, as this impacts energy efficiency and heating costs." },
+            { category: "VI. Additional Key Considerations", item: "Understand if the basement is finished, unfinished, or a crawl space, and how this impacts usability and potential for future development." },
+            { category: "VI. Additional Key Considerations", item: "Especially for older homes or in areas known for higher radon levels, consider requesting or performing a radon test." },
+            { category: "VI. Additional Key Considerations", item: "Check for functional smoke detectors and carbon monoxide detectors throughout the house." },
+        ];
+
+        // Data for red flags
+        const redFlagsData = [
+            { category: "Electrical System", flag: "Aluminum wiring. This is a significant safety concern and a red flag." },
+            { category: "Structural & Foundation", flag: "Horizontal cracks in the foundation. These are very serious and indicate potential structural issues, unlike vertical cracks which are often less concerning." },
+            { category: "Property Occupancy", flag: "Property currently rented out. This can lead to complications with vacant possession and tenant issues." },
+            { category: "Water Issues", flag: "Significant or persistent dampness/water issues in the basement. This can indicate drainage problems, foundation issues, or mold risks." },
+            { category: "Permits & Renovations", flag: "Work done on the property without proper permits. Unpermitted work can lead to safety hazards, insurance issues, and problems during resale." },
+            { category: "Pest Infestation", flag: "Obvious signs of active rodent infestation (e.g., droppings in multiple areas, evidence of widespread bait use). This suggests an ongoing problem that is difficult and costly to eradicate." },
+            { category: "Property Grade", flag: "Negative grade where the land slopes towards the house. This directs water towards the foundation, increasing the risk of water damage and basement flooding." },
+        ];
+
+        const checklistTableBody = document.getElementById('checklistTableBody');
+        const redFlagsTableBody = document.getElementById('redFlagsTableBody');
+        const checklistTab = document.getElementById('checklistTab');
+        const redFlagsTab = document.getElementById('redFlagsTab');
+        const checklistSection = document.getElementById('checklistSection');
+        const redFlagsSection = document.getElementById('redFlagsSection');
+        const searchInput = document.getElementById('searchInput');
+        const printButton = document.getElementById('printButton');
+        const printRedFlagsContainer = document.getElementById('printRedFlagsContainer');
+
+        // Function to render the checklist table
+        function renderChecklist(dataToRender, printMode = false) {
+            checklistTableBody.innerHTML = ''; // Clear existing rows
+            let currentCategory = '';
+            let isFirstCategoryPrinted = false; // Flag to ensure the very first category doesn't get a page break
+
+            dataToRender.forEach(item => {
+                const row = document.createElement('tr');
+                row.classList.add('hover:bg-gray-50');
+
+                // Add category if it's new
+                if (item.category !== currentCategory) {
+                    currentCategory = item.category;
+                    const categoryRow = document.createElement('tr');
+                    categoryRow.classList.add('bg-gray-100', 'font-semibold', 'text-gray-700');
+
+                    // Apply page break only if it's print mode and not the very first category header
+                    if (printMode && isFirstCategoryPrinted) {
+                        categoryRow.classList.add('print-new-page-category');
+                    }
+                    isFirstCategoryPrinted = true; // Set flag after the first category is processed
+
+                    categoryRow.innerHTML = `<td colspan="3" class="px-6 py-2 border-b border-gray-200 text-sm">${item.category}</td>`;
+                    checklistTableBody.appendChild(categoryRow);
+                }
+
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-normal text-sm text-gray-900 hidden md:table-cell"></td> <!-- Hidden for smaller screens -->
+                    <td class="px-6 py-4 whitespace-normal text-sm text-gray-900">${item.item}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                        <div class="checkbox-container">
+                            <input type="checkbox" class="h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500" ${printMode ? 'disabled' : ''}>
+                        </div>
+                    </td>
+                `;
+                checklistTableBody.appendChild(row);
+            });
+        }
+
+        // Function to render the red flags, handles both interactive table and print list
+        function renderRedFlags(dataToRender, printMode = false) {
+            redFlagsTableBody.innerHTML = ''; // Clear existing table rows
+            printRedFlagsContainer.innerHTML = ''; // Clear print container content
+
+            const redFlagsTable = redFlagsSection.querySelector('table');
+
+            if (printMode) {
+                redFlagsTable.style.display = 'none'; // Hide the table in print mode
+                printRedFlagsContainer.style.display = 'block'; // Show the list container
+
+                const title = document.createElement('h2');
+                title.classList.add('text-2xl', 'font-bold', 'text-gray-800', 'mb-4', 'mt-8'); // Tailwind classes
+                title.textContent = 'Red Flags to Watch Out For';
+                printRedFlagsContainer.appendChild(title);
+
+                const ul = document.createElement('ul');
+                ul.classList.add('list-disc', 'list-inside', 'text-gray-800', 'space-y-2', 'pl-4'); // Tailwind classes
+
+                let currentCategory = '';
+                dataToRender.forEach(item => {
+                    // Add category heading within the list if it's a new category
+                    if (item.category !== currentCategory) {
+                        currentCategory = item.category;
+                        const categoryHeader = document.createElement('li');
+                        categoryHeader.classList.add('font-semibold', 'mt-4', 'mb-1', 'text-red-700'); // Tailwind classes
+                        categoryHeader.textContent = item.category + ":";
+                        ul.appendChild(categoryHeader);
+                    }
+                    const li = document.createElement('li');
+                    li.textContent = item.flag;
+                    li.classList.add('red-flag-text'); // Tailwind class for red text
+                    ul.appendChild(li);
+                });
+                printRedFlagsContainer.appendChild(ul);
+
+            } else {
+                redFlagsTable.style.display = 'table'; // Show the table in interactive mode
+                printRedFlagsContainer.style.display = 'none'; // Hide the list container
+
+                // Existing table rendering logic for interactive view
+                let currentCategory = '';
+                dataToRender.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.classList.add('red-flag-row', 'hover:bg-red-50');
+
+                    if (item.category !== currentCategory) {
+                        currentCategory = item.category;
+                        const categoryRow = document.createElement('tr');
+                        categoryRow.classList.add('bg-red-100', 'font-semibold', 'text-red-700');
+                        categoryRow.innerHTML = `<td colspan="2" class="px-6 py-2 border-b border-red-200 text-sm">${item.category}</td>`;
+                        redFlagsTableBody.appendChild(categoryRow);
+                    }
+
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-normal text-sm text-gray-900 hidden md:table-cell"></td>
+                        <td class="px-6 py-4 whitespace-normal text-sm red-flag-text">${item.flag}</td>
+                    `;
+                    redFlagsTableBody.appendChild(row);
+                });
+            }
+        }
+
+        // Event listener for tab switching
+        checklistTab.addEventListener('click', () => {
+            checklistTab.classList.add('active');
+            redFlagsTab.classList.remove('active');
+            checklistSection.classList.remove('hidden');
+            redFlagsSection.classList.add('hidden');
+            searchInput.placeholder = "Search checklist items...";
+            renderChecklist(checklistData); // Re-render to ensure all items are visible after search
+            searchInput.value = ''; // Clear search when switching tabs
+        });
+
+        redFlagsTab.addEventListener('click', () => {
+            redFlagsTab.classList.add('active');
+            checklistTab.classList.remove('active');
+            redFlagsSection.classList.remove('hidden');
+            checklistSection.classList.add('hidden');
+            searchInput.placeholder = "Search red flags...";
+            renderRedFlags(redFlagsData); // Re-render red flags
+            searchInput.value = ''; // Clear search when switching tabs
+        });
+
+        // Event listener for search input
+        searchInput.addEventListener('keyup', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            if (!checklistSection.classList.contains('hidden')) { // If checklist is active
+                const filteredData = checklistData.filter(item =>
+                    item.item.toLowerCase().includes(searchTerm) ||
+                    item.category.toLowerCase().includes(searchTerm)
+                );
+                renderChecklist(filteredData);
+            } else if (!redFlagsSection.classList.contains('hidden')) { // If red flags is active
+                const filteredData = redFlagsData.filter(item =>
+                    item.flag.toLowerCase().includes(searchTerm) ||
+                    item.category.toLowerCase().includes(searchTerm)
+                );
+                renderRedFlags(filteredData);
+            }
+        });
+
+        // Event listener for print button
+        printButton.addEventListener('click', () => {
+            // Temporarily show both sections for printing
+            const originalChecklistDisplay = checklistSection.style.display;
+            const originalRedFlagsDisplay = redFlagsSection.style.display;
+            const originalChecklistHidden = checklistSection.classList.contains('hidden');
+            const originalRedFlagsHidden = redFlagsSection.classList.contains('hidden');
+
+            checklistSection.classList.remove('hidden');
+            redFlagsSection.classList.remove('hidden');
+
+            // Render all data for printing (no filtering by search)
+            renderChecklist(checklistData, true); // Pass true for printMode
+            renderRedFlags(redFlagsData, true); // Pass true for printMode (this will generate the list format)
+
+            window.print();
+
+            // Restore original display states after printing
+            if (originalChecklistHidden) {
+                checklistSection.classList.add('hidden');
+            }
+            if (originalRedFlagsHidden) {
+                redFlagsSection.classList.add('hidden');
+            }
+            checklistSection.style.display = originalChecklistDisplay;
+            redFlagsSection.style.display = originalRedFlagsDisplay;
+
+            // Re-render based on current active tab to restore interactive state
+            if (checklistTab.classList.contains('active')) {
+                renderChecklist(checklistData);
+            } else {
+                renderRedFlags(redFlagsData);
+            }
+        });
+
+        // Initial render on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            renderChecklist(checklistData);
+            // Optionally, save/load checkbox state from local storage if persistence is desired.
+            // For this version, checkboxes reset on page refresh.
+        });
+    </script>
+</body>
+
+</html>
